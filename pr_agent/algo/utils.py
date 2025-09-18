@@ -59,8 +59,8 @@ class TodoItem(TypedDict):
 
 
 class PRReviewHeader(str, Enum):
-    REGULAR = "## PR Reviewer Guide"
-    INCREMENTAL = "## Incremental PR Reviewer Guide"
+    REGULAR = "## Guia do Revisor de PR"
+    INCREMENTAL = "## Guia do Revisor de PR (Incremental)"
 
 
 class ReasoningEffort(str, Enum):
@@ -156,12 +156,12 @@ def convert_to_markdown_v2(output_data: dict,
         markdown_text += f"{PRReviewHeader.REGULAR.value} 🔍\n\n"
     else:
         markdown_text += f"{PRReviewHeader.INCREMENTAL.value} 🔍\n\n"
-        markdown_text += f"⏮️ Review for commits since previous PR-Agent review {incremental_review}.\n\n"
+        markdown_text += f"⏮️ Revisão para commits desde a revisão anterior do PR-Agent {incremental_review}.\n\n"
     if not output_data or not output_data.get('review', {}):
         return ""
 
     if get_settings().get("pr_reviewer.enable_intro_text", False):
-        markdown_text += f"Here are some key observations to aid the review process:\n\n"
+        markdown_text += f"Aqui estão algumas observações-chave para apoiar a revisão:\n\n"
 
     if gfm_supported:
         markdown_text += "<table>\n"
@@ -174,7 +174,7 @@ def convert_to_markdown_v2(output_data: dict,
         key_nice = key.replace('_', ' ').capitalize()
         emoji = emojis.get(key_nice, "")
         if 'Estimated effort to review' in key_nice:
-            key_nice = 'Estimated effort to review'
+            key_nice = 'Esforço de revisão'
             value = str(value).strip()
             if value.isnumeric():
                 value_int = int(value)
@@ -197,58 +197,58 @@ def convert_to_markdown_v2(output_data: dict,
             if gfm_supported:
                 markdown_text += f"<tr><td>"
                 if is_value_no(value):
-                    markdown_text += f"{emoji}&nbsp;<strong>No relevant tests</strong>"
+                    markdown_text += f"{emoji}&nbsp;<strong>Sem testes relevantes</strong>"
                 else:
-                    markdown_text += f"{emoji}&nbsp;<strong>PR contains tests</strong>"
+                    markdown_text += f"{emoji}&nbsp;<strong>PR contém testes</strong>"
                 markdown_text += f"</td></tr>\n"
             else:
                 if is_value_no(value):
-                    markdown_text += f'### {emoji} No relevant tests\n\n'
+                    markdown_text += f'### {emoji} Sem testes relevantes\n\n'
                 else:
-                    markdown_text += f"### {emoji} PR contains tests\n\n"
+                    markdown_text += f"### {emoji} PR contém testes\n\n"
         elif 'ticket compliance check' in key_nice.lower():
             markdown_text = ticket_markdown_logic(emoji, markdown_text, value, gfm_supported)
         elif 'contribution time cost estimate' in key_nice.lower():
             if gfm_supported:
-                markdown_text += f"<tr><td>{emoji}&nbsp;<strong>Contribution time estimate</strong> (best, average, worst case): "
-                markdown_text += f"{value['best_case'].replace('m', ' minutes')} | {value['average_case'].replace('m', ' minutes')} | {value['worst_case'].replace('m', ' minutes')}"
+                markdown_text += f"<tr><td>{emoji}&nbsp;<strong>Estimativa de tempo de contribuição</strong> (melhor, médio, pior caso): "
+                markdown_text += f"{value['best_case'].replace('m', ' minutos')} | {value['average_case'].replace('m', ' minutos')} | {value['worst_case'].replace('m', ' minutos')}"
                 markdown_text += f"</td></tr>\n"
             else:
-                markdown_text += f"### {emoji} Contribution time estimate (best, average, worst case): "
-                markdown_text += f"{value['best_case'].replace('m', ' minutes')} | {value['average_case'].replace('m', ' minutes')} | {value['worst_case'].replace('m', ' minutes')}\n\n"
+                markdown_text += f"### {emoji} Estimativa de tempo de contribuição (melhor, médio, pior caso): "
+                markdown_text += f"{value['best_case'].replace('m', ' minutos')} | {value['average_case'].replace('m', ' minutos')} | {value['worst_case'].replace('m', ' minutos')}\n\n"
         elif 'security concerns' in key_nice.lower():
             if gfm_supported:
                 markdown_text += f"<tr><td>"
                 if is_value_no(value):
-                    markdown_text += f"{emoji}&nbsp;<strong>No security concerns identified</strong>"
+                    markdown_text += f"{emoji}&nbsp;<strong>Nenhuma preocupação de segurança identificada</strong>"
                 else:
-                    markdown_text += f"{emoji}&nbsp;<strong>Security concerns</strong><br><br>\n\n"
+                    markdown_text += f"{emoji}&nbsp;<strong>Preocupações de segurança</strong><br><br>\n\n"
                     value = emphasize_header(value.strip())
                     markdown_text += f"{value}"
                 markdown_text += f"</td></tr>\n"
             else:
                 if is_value_no(value):
-                    markdown_text += f'### {emoji} No security concerns identified\n\n'
+                    markdown_text += f'### {emoji} Nenhuma preocupação de segurança identificada\n\n'
                 else:
-                    markdown_text += f"### {emoji} Security concerns\n\n"
+                    markdown_text += f"### {emoji} Preocupações de segurança\n\n"
                     value = emphasize_header(value.strip(), only_markdown=True)
                     markdown_text += f"{value}\n\n"
         elif 'todo sections' in key_nice.lower():
             if gfm_supported:
                 markdown_text += "<tr><td>"
                 if is_value_no(value):
-                    markdown_text += f"✅&nbsp;<strong>No TODO sections</strong>"
+                    markdown_text += f"✅&nbsp;<strong>Nenhuma seção TODO</strong>"
                 else:
                     markdown_todo_items = format_todo_items(value, git_provider, gfm_supported)
-                    markdown_text += f"{emoji}&nbsp;<strong>TODO sections</strong>\n<br><br>\n"
+                    markdown_text += f"{emoji}&nbsp;<strong>Seções TODO</strong>\n<br><br>\n"
                     markdown_text += markdown_todo_items
                 markdown_text += "</td></tr>\n"
             else:
                 if is_value_no(value):
-                    markdown_text += f"### ✅ No TODO sections\n\n"
+                    markdown_text += f"### ✅ Nenhuma seção TODO\n\n"
                 else:
                     markdown_todo_items = format_todo_items(value, git_provider, gfm_supported)
-                    markdown_text += f"### {emoji} TODO sections\n\n"
+                    markdown_text += f"### {emoji} Seções TODO\n\n"
                     markdown_text += markdown_todo_items
         elif 'can be split' in key_nice.lower():
             if gfm_supported:
@@ -260,18 +260,17 @@ def convert_to_markdown_v2(output_data: dict,
             if is_value_no(value):
                 if gfm_supported:
                     markdown_text += f"<tr><td>"
-                    markdown_text += f"{emoji}&nbsp;<strong>No major issues detected</strong>"
+                    markdown_text += f"{emoji}&nbsp;<strong>Nenhum problema relevante identificado</strong>"
                     markdown_text += f"</td></tr>\n"
                 else:
-                    markdown_text += f"### {emoji} No major issues detected\n\n"
+                    markdown_text += f"### {emoji} Nenhum problema relevante identificado\n\n"
             else:
                 issues = value
                 if gfm_supported:
                     markdown_text += f"<tr><td>"
-                    # markdown_text += f"{emoji}&nbsp;<strong>{key_nice}</strong><br><br>\n\n"
-                    markdown_text += f"{emoji}&nbsp;<strong>Recommended focus areas for review</strong><br><br>\n\n"
+                    markdown_text += f"{emoji}&nbsp;<strong>Áreas recomendadas de foco para revisão</strong><br><br>\n\n"
                 else:
-                    markdown_text += f"### {emoji} Recommended focus areas for review\n\n#### \n"
+                    markdown_text += f"### {emoji} Áreas recomendadas de foco para revisão\n\n#### \n"
                 for i, issue in enumerate(issues):
                     try:
                         if not issue or not isinstance(issue, dict):
