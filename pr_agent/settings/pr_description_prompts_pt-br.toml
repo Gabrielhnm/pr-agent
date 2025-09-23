@@ -20,11 +20,11 @@ Instruções extras do usuário:
 A saída deve ser um objeto YAML equivalente ao tipo $PRDescription, de acordo com as seguintes definições Pydantic:
 =====
 class PRType(str, Enum):
-    bug_fix = "Bug fix"
-    tests = "Tests"
-    enhancement = "Enhancement"
-    documentation = "Documentation"
-    other = "Other"
+    bug_fix = "Correção de bug"
+    tests = "Testes"
+    enhancement = "Melhorias"
+    documentation = "Documentação"
+    other = "Outros"
 
 {%- if enable_custom_labels %}
 
@@ -40,7 +40,7 @@ class FileDescription(BaseModel):
     changes_summary: str = Field(description="resumo conciso das mudanças no arquivo relevante, em tópicos (1-4 marcadores).")
 {%- endif %}
     changes_title: str = Field(description="resumo em uma linha (5-10 palavras) capturando o tema principal das mudanças no arquivo")
-    label: str = Field(description="um único rótulo semântico que representa o tipo de mudanças de código ocorridas no arquivo. Valores possíveis (lista parcial): 'bug fix', 'tests', 'enhancement', 'documentation', 'error handling', 'configuration changes', 'dependencies', 'formatting', 'miscellaneous', ...")
+    label: str = Field(description="um único rótulo semântico que representa o tipo de mudanças de código ocorridas no arquivo. Valores possíveis (lista parcial): 'correção de bugs', 'testes', 'melhorias', 'documentação', 'tratamento de erros', 'mudanças de configuração', 'dependências', 'formatação', 'diversos', ...")
 {%- endif %}
 
 class PRDescription(BaseModel):

@@ -66,7 +66,7 @@ ESPECÍFICOS POR CONTEXTO (aplicar conforme o PR):
 
 [pr_description]
 enable_pr_type = true
-enable_pr_diagram = true
+enable_pr_diagram = false
 add_original_user_description = true
 use_bullet_points = true
 extra_instructions = """
@@ -83,7 +83,7 @@ DOCUMENTAR PARA AIRFLOW:
 - Impacto na performance do ETL
 - Compatibilidade com dados históricos
 
-DOCUMENTAR PARA API:
+DOCUMENTAR PARA API (Spring boot):
 - Novos endpoints ou mudanças existentes
 - Mudanças no contrato de API
 - Impacto na integração com frontend

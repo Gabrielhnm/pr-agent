@@ -70,8 +70,8 @@ class ReasoningEffort(str, Enum):
 
 
 class PRDescriptionHeader(str, Enum):
-    DIAGRAM_WALKTHROUGH = "Diagram Walkthrough"
-    FILE_WALKTHROUGH = "File Walkthrough"
+    DIAGRAM_WALKTHROUGH = "Diagrama de Fluxo"
+    FILE_WALKTHROUGH = "Análise de Arquivos"
 
 
 def get_setting(key: str) -> Any:
