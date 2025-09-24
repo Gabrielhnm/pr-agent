@@ -53,10 +53,10 @@ temperature=0.2
 add_repo_metadata=true # if true, will try to add metadata from files like 'AGENTS.MD', 'CLAUDE.MD', 'QODO.MD'
 add_repo_metadata_file_list =["AGENTS.MD", "CLAUDE.MD", "README.MD", "changelog.md"]
 # ignore logic
-ignore_pr_title = ["^\\[Auto\\]", "^Auto"] # a list of regular expressions to match against the PR title to ignore the PR agent
+ignore_pr_title = ["^\\[WIP\\]"] # a list of regular expressions to match against the PR title to ignore the PR agent
 ignore_pr_target_branches = [] # a list of regular expressions of target branches to ignore from PR agent when an PR is created
 ignore_pr_source_branches = [] # a list of regular expressions of source branches to ignore from PR agent when an PR is created
-ignore_pr_labels = [] # labels to ignore from PR agent when an PR is created
+ignore_pr_labels = ["WIP"] # labels to ignore from PR agent when an PR is created
 ignore_pr_authors = [] # authors to ignore from PR agent when an PR is created
 ignore_repositories = [] # a list of regular expressions of repository full names (e.g. "org/repo") to ignore from PR agent processing
 ignore_language_framework = [] # a list of code-generation languages or frameworks (e.g. 'protobuf', 'go_gen') whose auto-generated source files will be excluded from analysis
@@ -111,7 +111,7 @@ enable_pr_type=true
 final_update_message = true
 enable_help_text=false
 enable_help_comment=false
-enable_pr_diagram=true # adds a section with a diagram of the PR changes
+enable_pr_diagram=false # adds a section with a diagram of the PR changes
 # describe as comment
 publish_description_as_comment=false
 publish_description_as_comment_persistent=true

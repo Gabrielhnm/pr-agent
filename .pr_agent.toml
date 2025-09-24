@@ -3,7 +3,7 @@ response_language = "pt-BR"
 enable_custom_labels = true
 max_description_tokens = 800
 add_repo_metadata = true
-add_repo_metadata_file_list = [changelog.md", "README.md"]
+add_repo_metadata_file_list = ["changelog.md", "README.md"]
 
 [pr_reviewer]
 enable_review_labels_effort = true
