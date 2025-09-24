@@ -121,6 +121,71 @@ async def handle_request_azure(data, log_context):
         pr_url = unquote(data["resource"]["_links"]["web"]["href"].replace("_apis/git/repositories", "_git"))
         log_context["event"] = data["eventType"]
         log_context["api_url"] = pr_url
+        # Apply ignore logic similar to other providers (title, labels, branches, authors, repos)
+        try:
+            resource = data.get("resource", {})
+            title = resource.get("title", "")
+            created_by_data = resource.get("createdBy", {}) or {}
+            created_by = created_by_data.get("uniqueName") or created_by_data.get("displayName", "")
+            repo_data = resource.get("repository", {}) or {}
+            repo_full_name = repo_data.get("name", "")
+            project_name = (repo_data.get("project", {}) or {}).get("name", "")
+            if project_name and repo_full_name:
+                repo_full_name = f"{project_name}/{repo_full_name}"
+
+            source_ref_name = resource.get("sourceRefName") or ""
+            target_ref_name = resource.get("targetRefName") or ""
+            source_branch = source_ref_name.split("/")[-1] if source_ref_name else ""
+            target_branch = target_ref_name.split("/")[-1] if target_ref_name else ""
+
+            labels = []
+            try:
+                for label_data in resource.get("labels", []) or []:
+                    if isinstance(label_data, dict):
+                        name = label_data.get("name")
+                        if name:
+                            labels.append(name)
+            except Exception:
+                pass
+
+            ignore_repos = get_settings().get("CONFIG.IGNORE_REPOSITORIES", [])
+            if repo_full_name and ignore_repos:
+                if any(re.search(regex, repo_full_name) for regex in ignore_repos):
+                    get_logger().info(f"Ignoring ADO PR from repository '{repo_full_name}' due to 'config.ignore_repositories' setting")
+                    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"message": "ignored"}))
+
+            ignore_pr_users = get_settings().get("CONFIG.IGNORE_PR_AUTHORS", [])
+            if created_by and ignore_pr_users:
+                if any(re.search(regex, created_by) for regex in ignore_pr_users):
+                    get_logger().info(f"Ignoring ADO PR from user '{created_by}' due to 'config.ignore_pr_authors' setting")
+                    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"message": "ignored"}))
+
+            if title:
+                ignore_pr_title_re = get_settings().get("CONFIG.IGNORE_PR_TITLE", [])
+                if not isinstance(ignore_pr_title_re, list):
+                    ignore_pr_title_re = [ignore_pr_title_re]
+                if ignore_pr_title_re and any(re.search(regex, title) for regex in ignore_pr_title_re):
+                    get_logger().info(f"Ignoring ADO PR with title '{title}' due to config.ignore_pr_title setting")
+                    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"message": "ignored"}))
+
+            ignore_pr_labels = get_settings().get("CONFIG.IGNORE_PR_LABELS", [])
+            if labels and ignore_pr_labels:
+                if any(label in ignore_pr_labels for label in labels):
+                    labels_str = ", ".join(labels)
+                    get_logger().info(f"Ignoring ADO PR with labels '{labels_str}' due to config.ignore_pr_labels settings")
+                    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"message": "ignored"}))
+
+            ignore_pr_source_branches = get_settings().get("CONFIG.IGNORE_PR_SOURCE_BRANCHES", [])
+            ignore_pr_target_branches = get_settings().get("CONFIG.IGNORE_PR_TARGET_BRANCHES", [])
+            if ignore_pr_source_branches and any(re.search(regex, source_branch) for regex in ignore_pr_source_branches):
+                get_logger().info(f"Ignoring ADO PR with source branch '{source_branch}' due to config.ignore_pr_source_branches settings")
+                return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"message": "ignored"}))
+            if ignore_pr_target_branches and any(re.search(regex, target_branch) for regex in ignore_pr_target_branches):
+                get_logger().info(f"Ignoring ADO PR with target branch '{target_branch}' due to config.ignore_pr_target_branches settings")
+                return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content=jsonable_encoder({"message": "ignored"}))
+        except Exception as e:
+            get_logger().error(f"Failed 'ADO should_process_pr_logic': {e}")
+
         await _perform_commands_azure("pr_commands", PRAgent(), pr_url, log_context)
         return JSONResponse(
             status_code=status.HTTP_202_ACCEPTED,
