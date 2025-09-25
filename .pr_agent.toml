@@ -13,7 +13,6 @@ require_focused_review = true
 require_estimate_effort_to_review = true
 extra_instructions = """
 CONTEXTO CRÍTICO: Sistema de saúde (REDS).
-Comece as frases com EDS no ínicio.
 
 PRIORIDADES DE REVISÃO:
 1. Segurança e privacidade de dados de pacientes (LGPD)
@@ -72,7 +71,6 @@ add_original_user_description = true
 use_bullet_points = true
 extra_instructions = """
 CONTEXTO: Sistema REDS - Rede Estadual de Dados de Saúde.
-Comece as frases com EDS no ínicio.
 
 INCLUIR NA DESCRIÇÃO:
 - Considerações de segurança e privacidade
