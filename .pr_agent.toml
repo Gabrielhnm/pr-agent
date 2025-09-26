@@ -1,6 +1,7 @@
 [config]
 response_language = "pt-BR"
 output_relevant_configurations = true
+publish_output=true
 enable_custom_labels = true
 max_description_tokens = 800
 add_repo_metadata = true
