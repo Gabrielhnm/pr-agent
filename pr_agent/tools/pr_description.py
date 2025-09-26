@@ -639,31 +639,15 @@ class PRDescription:
                     get_logger().warning(f"Empty changes title or summary in file label dict {self.pr_id}, skipping file",
                                          artifact={"file": file})
                     continue
-                # Normalize and validate fields to avoid type errors
-                filename_raw = file.get('filename', "")
-                filename = str(filename_raw).replace("'", "`").replace('"', '`').strip()
-
-                changes_summary_raw = file.get('changes_summary')
-                changes_summary = str(changes_summary_raw or "")
-                if not changes_summary.strip() and self.vars.get('include_file_summary_changes', True):
+                filename = file['filename'].replace("'", "`").replace('"', '`')
+                changes_summary = file.get('changes_summary', "")
+                if not changes_summary and self.vars.get('include_file_summary_changes', True):
                     get_logger().warning(f"Empty changes summary in file label dict, skipping file",
                                          artifact={"file": file})
                     continue
                 changes_summary = changes_summary.strip()
-
-                changes_title_raw = file.get('changes_title', "")
-                changes_title = str(changes_title_raw).strip()
-                if not changes_title:
-                    get_logger().warning(f"Empty changes title in file label dict {self.pr_id}, skipping file",
-                                         artifact={"file": file})
-                    continue
-
-                label_raw = file.get('label', "")
-                label = str(label_raw).strip().lower()
-                if not label:
-                    get_logger().warning(f"Empty label in file label dict {self.pr_id}, skipping file",
-                                         artifact={"file": file})
-                    continue
+                changes_title = file['changes_title'].strip()
+                label = file.get('label').strip().lower()
                 if label not in file_label_dict:
                     file_label_dict[label] = []
                 file_label_dict[label].append((filename, changes_title, changes_summary))
