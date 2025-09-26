@@ -74,6 +74,8 @@ class PRReviewer:
             get_settings().set("config.enable_ai_metadata", False)
             get_logger().debug(f"AI metadata is disabled for this command")
 
+        reviewer_extra_instructions = get_settings().pr_reviewer.get("extra_instructions", "")
+
         self.vars = {
             "title": self.git_provider.pr.title,
             "branch": self.git_provider.get_pr_branch(),
@@ -91,7 +93,7 @@ class PRReviewer:
             'require_todo_scan': get_settings().pr_reviewer.get("require_todo_scan", False),
             'question_str': question_str,
             'answer_str': answer_str,
-            "extra_instructions": get_settings().pr_reviewer.extra_instructions,
+            "extra_instructions": reviewer_extra_instructions,
             "commit_messages_str": self.git_provider.get_commit_messages(),
             "custom_labels": "",
             "enable_custom_labels": get_settings().config.enable_custom_labels,
@@ -102,7 +104,7 @@ class PRReviewer:
         }
 
         try:
-            extra_instr = self.vars.get("extra_instructions", "")
+            extra_instr = reviewer_extra_instructions or ""
             snippet = str(extra_instr)[:200]
             if len(str(extra_instr)) > 200:
                 snippet += "..."

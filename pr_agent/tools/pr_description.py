@@ -60,13 +60,15 @@ class PRDescription:
         # Initialize the variables dictionary
         self.COLLAPSIBLE_FILE_LIST_THRESHOLD = get_settings().pr_description.get("collapsible_file_list_threshold", 8)
         enable_pr_diagram = get_settings().pr_description.get("enable_pr_diagram", False) and self.git_provider.is_supported("gfm_markdown") # github and gitlab support gfm_markdown
+        description_extra_instructions = get_settings().pr_description.get("extra_instructions", "")
+
         self.vars = {
             "title": self.git_provider.pr.title,
             "branch": self.git_provider.get_pr_branch(),
             "description": self.git_provider.get_pr_description(full=False),
             "language": self.main_pr_language,
             "diff": "",  # empty diff for initial calculation
-            "extra_instructions": get_settings().pr_description.extra_instructions,
+            "extra_instructions": description_extra_instructions,
             "commit_messages_str": self.git_provider.get_commit_messages(),
             "enable_custom_labels": get_settings().config.enable_custom_labels,
             "custom_labels_class": "",  # will be filled if necessary in 'set_custom_labels' function
@@ -78,7 +80,7 @@ class PRDescription:
         }
 
         try:
-            extra_instr = self.vars.get("extra_instructions", "")
+            extra_instr = description_extra_instructions or ""
             snippet = str(extra_instr)[:200]
             if len(str(extra_instr)) > 200:
                 snippet += "..."
