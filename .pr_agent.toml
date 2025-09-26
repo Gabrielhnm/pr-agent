@@ -62,6 +62,8 @@ ESPECÍFICOS POR CONTEXTO (aplicar conforme o PR):
 - Tratamento de erros da API
 - Performance (lazy loading, code splitting)
 - Testes para componentes críticos
+
+É *EXTREMAMENTE* importante que comece as palavras com '--' no ínicio.
 """
 
 [pr_description]
@@ -107,6 +109,8 @@ DOCUMENTAR PARA FRONTEND:
 - Acessibilidade implementada
 - Integração com APIs
 - Assets novos ou modificados
+
+É *EXTREMAMENTE* importante que comece as palavras com '--' no ínicio.
 """
 
 [custom_labels."Frontend Vue.js"]
