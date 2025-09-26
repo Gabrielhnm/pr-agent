@@ -108,7 +108,7 @@ class PRReviewer:
             snippet = str(extra_instr)[:200]
             if len(str(extra_instr)) > 200:
                 snippet += "..."
-        get_logger().debug(f"PRReviewer extra_instructions preview: {snippet}")
+            get_logger().debug(f"PRReviewer extra_instructions preview: {snippet}")
         except Exception:
             get_logger().debug("PRReviewer extra_instructions preview unavailable")
 
