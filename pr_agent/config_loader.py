@@ -42,31 +42,6 @@ global_settings = Dynaconf(
 )
 
 
-def _safe_get_logger():
-    try:
-        from pr_agent.log import get_logger
-        return get_logger()
-    except Exception:
-        class DummyLogger:
-            def debug(self, msg, *args, **kwargs):
-                pass
-
-            def info(self, msg, *args, **kwargs):
-                pass
-
-        return DummyLogger()
-
-
-try:
-    pr_review_prompt_system = global_settings.pr_review_prompt.system
-    _safe_get_logger().debug(
-        "Loaded pr_review_prompt.system (first 200 chars): %s",
-        str(pr_review_prompt_system)[:200]
-    )
-except Exception:
-    pass
-
-
 def get_settings(use_context=False):
     """
     Retrieves the current settings.
