@@ -60,15 +60,13 @@ class PRDescription:
         # Initialize the variables dictionary
         self.COLLAPSIBLE_FILE_LIST_THRESHOLD = get_settings().pr_description.get("collapsible_file_list_threshold", 8)
         enable_pr_diagram = get_settings().pr_description.get("enable_pr_diagram", False) and self.git_provider.is_supported("gfm_markdown") # github and gitlab support gfm_markdown
-        description_extra_instructions = get_settings().pr_description.get("extra_instructions", "")
-
         self.vars = {
             "title": self.git_provider.pr.title,
             "branch": self.git_provider.get_pr_branch(),
             "description": self.git_provider.get_pr_description(full=False),
             "language": self.main_pr_language,
             "diff": "",  # empty diff for initial calculation
-            "extra_instructions": description_extra_instructions,
+            "extra_instructions": get_settings().pr_description.extra_instructions,
             "commit_messages_str": self.git_provider.get_commit_messages(),
             "enable_custom_labels": get_settings().config.enable_custom_labels,
             "custom_labels_class": "",  # will be filled if necessary in 'set_custom_labels' function
@@ -78,15 +76,6 @@ class PRDescription:
             "duplicate_prompt_examples": get_settings().config.get("duplicate_prompt_examples", False),
             "enable_pr_diagram": enable_pr_diagram,
         }
-
-        try:
-            extra_instr = description_extra_instructions or ""
-            snippet = str(extra_instr)[:200]
-            if len(str(extra_instr)) > 200:
-                snippet += "..."
-            get_logger().debug(f"PRDescription extra_instructions preview: {snippet}")
-        except Exception:
-            get_logger().debug("PRDescription extra_instructions preview unavailable")
 
         self.user_description = self.git_provider.get_user_description()
 
@@ -106,6 +95,16 @@ class PRDescription:
     async def run(self):
         try:
             get_logger().info(f"Generating a PR description for pr_id: {self.pr_id}")
+
+            # Debug: Print extra_instructions to verify they are loaded
+            extra_instructions = get_settings().pr_description.extra_instructions
+            get_logger().info(f" DEBUG - extra_instructions length: {len(extra_instructions)}")
+            if extra_instructions:
+                get_logger().info(f" DEBUG - extra_instructions preview: {extra_instructions[:200]}...")
+                get_logger().info(" DEBUG - extra_instructions are LOADED and ACTIVE")
+            else:
+                get_logger().warning("DEBUG - extra_instructions are EMPTY or NOT LOADED!")
+
             relevant_configs = {'pr_description': dict(get_settings().pr_description),
                                 'config': dict(get_settings().config)}
             get_logger().debug("Relevant configs", artifact=relevant_configs)
