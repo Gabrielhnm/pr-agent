@@ -52,10 +52,10 @@ def apply_repo_settings(pr_url):
                     # Debug: Verify extra_instructions were applied
                     applied_settings = get_settings()
                     if hasattr(applied_settings, 'pr_description'):
-                        desc_extra = applied_settings.pr_description.extra_instructions
+                        desc_extra = getattr(applied_settings.pr_description, 'extra_instructions', '')
                         get_logger().info(f"DEBUG - After applying repo settings - pr_description.extra_instructions: {len(desc_extra)} chars")
                     if hasattr(applied_settings, 'pr_reviewer'):
-                        rev_extra = applied_settings.pr_reviewer.extra_instructions
+                        rev_extra = getattr(applied_settings.pr_reviewer, 'extra_instructions', '')
                         get_logger().info(f"DEBUG - After applying repo settings - pr_reviewer.extra_instructions: {len(rev_extra)} chars")
 
                 except Exception as e:

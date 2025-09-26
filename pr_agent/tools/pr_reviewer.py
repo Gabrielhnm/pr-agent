@@ -91,7 +91,7 @@ class PRReviewer:
             'require_todo_scan': get_settings().pr_reviewer.get("require_todo_scan", False),
             'question_str': question_str,
             'answer_str': answer_str,
-            "extra_instructions": get_settings().pr_reviewer.extra_instructions,
+            "extra_instructions": getattr(get_settings().pr_reviewer, 'extra_instructions', ''),
             "commit_messages_str": self.git_provider.get_commit_messages(),
             "custom_labels": "",
             "enable_custom_labels": get_settings().config.enable_custom_labels,
@@ -135,13 +135,18 @@ class PRReviewer:
             get_logger().info(f'Reviewing PR: {self.pr_url} ...')
 
             # Debug: Print extra_instructions to verify they are loaded
-            extra_instructions = get_settings().pr_reviewer.extra_instructions
-            get_logger().info(f" DEBUG - PR REVIEWER extra_instructions length: {len(extra_instructions)}")
-            if extra_instructions:
-                get_logger().info(f" DEBUG - PR REVIEWER extra_instructions preview: {extra_instructions[:200]}...")
-                get_logger().info(" DEBUG - PR REVIEWER extra_instructions are LOADED and ACTIVE")
-            else:
-                get_logger().warning("DEBUG - PR REVIEWER extra_instructions are EMPTY or NOT LOADED!")
+            try:
+                extra_instructions = get_settings().pr_reviewer.extra_instructions
+                get_logger().info(f" DEBUG - PR REVIEWER extra_instructions length: {len(extra_instructions)}")
+                if extra_instructions:
+                    get_logger().info(f" DEBUG - PR REVIEWER extra_instructions preview: {extra_instructions[:200]}...")
+                    get_logger().info(" DEBUG - PR REVIEWER extra_instructions are LOADED and ACTIVE")
+                else:
+                    get_logger().warning("DEBUG - PR REVIEWER extra_instructions are EMPTY or NOT LOADED!")
+            except AttributeError:
+                get_logger().warning("DEBUG - extra_instructions attribute does NOT EXIST in pr_reviewer section")
+            except Exception as e:
+                get_logger().warning(f"DEBUG - Error accessing PR REVIEWER extra_instructions: {e}")
             relevant_configs = {'pr_reviewer': dict(get_settings().pr_reviewer),
                                 'config': dict(get_settings().config)}
             get_logger().debug("Relevant configs", artifacts=relevant_configs)
