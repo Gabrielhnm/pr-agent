@@ -23,11 +23,6 @@ def apply_repo_settings(pr_url):
                 pass
             if repo_settings is None:  # None is different from "", which is a valid value
                 repo_settings = git_provider.get_repo_settings()
-                get_logger().info(f"DEBUG - Retrieved repo settings: {len(repo_settings) if repo_settings else 0} bytes")
-                if repo_settings:
-                    get_logger().info(f"DEBUG - Repo settings preview: {str(repo_settings)[:200]}...")
-                else:
-                    get_logger().warning("DEBUG - No repo settings found (.pr_agent.toml missing or empty)")
                 try:
                     context["repo_settings"] = repo_settings
                 except Exception:
@@ -48,16 +43,6 @@ def apply_repo_settings(pr_url):
                         get_settings().unset(section)
                         get_settings().set(section, section_dict, merge=False)
                     get_logger().info(f"Applying repo settings:\n{new_settings.as_dict()}")
-
-                    # Debug: Verify extra_instructions were applied
-                    applied_settings = get_settings()
-                    if hasattr(applied_settings, 'pr_description'):
-                        desc_extra = getattr(applied_settings.pr_description, 'extra_instructions', '')
-                        get_logger().info(f"DEBUG - After applying repo settings - pr_description.extra_instructions: {len(desc_extra)} chars")
-                    if hasattr(applied_settings, 'pr_reviewer'):
-                        rev_extra = getattr(applied_settings.pr_reviewer, 'extra_instructions', '')
-                        get_logger().info(f"DEBUG - After applying repo settings - pr_reviewer.extra_instructions: {len(rev_extra)} chars")
-
                 except Exception as e:
                     get_logger().warning(f"Failed to apply repo {category} settings, error: {str(e)}")
                     error_local = {'error': str(e), 'settings': repo_settings, 'category': category}
@@ -88,7 +73,7 @@ def handle_configurations_errors(config_errors, git_provider):
                 configuration_file_content = err['settings'].decode()
                 err_message = err['error']
                 config_type = err['category']
-                header = f"**PR-Agent failed to apply '{config_type}' repo settings**"
+                header = f"❌ **PR-Agent failed to apply '{config_type}' repo settings**"
                 body = f"{header}\n\nThe configuration file needs to be a valid [TOML](https://qodo-merge-docs.qodo.ai/usage-guide/configuration_options/), please fix it.\n\n"
                 body += f"___\n\n**Error message:**\n`{err_message}`\n\n"
                 if git_provider.is_supported("gfm_markdown"):

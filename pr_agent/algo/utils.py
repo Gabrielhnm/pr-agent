@@ -1274,16 +1274,35 @@ def show_relevant_configurations(relevant_section: str) -> str:
     markdown_text += "\n<hr>\n<details> <summary><strong>🛠️ Relevant configurations:</strong></summary> \n\n"
     markdown_text +="<br>These are the relevant [configurations](https://github.com/Codium-ai/pr-agent/blob/main/pr_agent/settings/configuration.toml) for this tool:\n\n"
     markdown_text += f"**[config**]\n```yaml\n\n"
+    MAX_HEAD_LINES = 10
     for key, value in get_settings().config.items():
         if key in skip_keys:
             continue
-        markdown_text += f"{key}: {value}\n"
+        if key == 'extra_instructions' and isinstance(value, str):
+            lines = value.splitlines()
+            head_lines = lines[:MAX_HEAD_LINES]
+            markdown_text += f"{key}: |\n"
+            for line in head_lines:
+                markdown_text += f"  {line}\n"
+            if len(lines) > MAX_HEAD_LINES:
+                markdown_text += "  ...(truncated)\n"
+        else:
+            markdown_text += f"{key}: {value}\n"
     markdown_text += "\n```\n"
     markdown_text += f"\n**[{relevant_section}]**\n```yaml\n\n"
     for key, value in get_settings().get(relevant_section, {}).items():
         if key in skip_keys:
             continue
-        markdown_text += f"{key}: {value}\n"
+        if key == 'extra_instructions' and isinstance(value, str):
+            lines = value.splitlines()
+            head_lines = lines[:MAX_HEAD_LINES]
+            markdown_text += f"{key}: |\n"
+            for line in head_lines:
+                markdown_text += f"  {line}\n"
+            if len(lines) > MAX_HEAD_LINES:
+                markdown_text += "  ...(truncated)\n"
+        else:
+            markdown_text += f"{key}: {value}\n"
     markdown_text += "\n```"
     markdown_text += "\n</details>\n"
     return markdown_text

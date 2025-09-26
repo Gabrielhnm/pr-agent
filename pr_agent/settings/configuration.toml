@@ -88,7 +88,59 @@ require_ticket_analysis_review=true
 # general options
 publish_output_no_suggestions=true # Set to "false" if you only need the reviewer's remarks (not labels, not "security audit", etc.) and want to avoid noisy "No major issues detected" comments.
 persistent_comment=true
-# extra_instructions = "" # Commented to allow user's .pr_agent.toml to take precedence
+extra_instructions = """
+CONTEXTO CRÍTICO: Sistema de saúde (REDS).
+
+PRIORIDADES DE REVISÃO:
+1. Segurança e privacidade de dados de pacientes (LGPD)
+2. Integridade de dados de saúde
+3. Performance em sistemas de grande volume
+4. Conformidade regulatória de saúde
+5. Usabilidade para profissionais de saúde
+
+VERIFICAÇÕES OBRIGATÓRIAS:
+- Dados sensíveis não expostos em logs
+- Validação adequada de dados de entrada
+- Mudanças ou implementações feitas que são elegíveis devem constar no arquivo changelog se existir
+- Tratamento de erros que não exponha informações
+- Performance adequada para volume de dados de saúde
+- Acessibilidade para usuários do sistema público
+- Padronização de código: artefatos de propósito semelhante DEVEM seguir o mesmo padrão de estrutura, nomenclatura (classes, funções, parâmetros e retornos), tratamento de erros, logs, validações, métricas e testes.
+
+ESPECÍFICOS POR CONTEXTO (aplicar conforme o PR):
+— AIRFLOW:
+- DAGs não interferem em processos críticos
+- Dependências entre tasks bem definidas
+- Retry logic adequado
+- Logs não expõem dados sensíveis
+- Compatibilidade com Oracle InstantClient
+
+— API (Spring Boot):
+- Endpoints protegidos (autenticação/autorização)
+- Logs não expõem dados de pacientes
+- DTOs adequados para response
+- Paginação em listagens
+- Tratamento de exceções sem expor stack traces
+
+— DATABASE:
+- Scripts SQL idempotentes
+- Indexes para performance
+- Constraints preservam integridade
+- Scripts de rollback funcionais
+- Não há dados hardcoded sensíveis
+- Comentários adequados no schema
+
+— FRONTEND (Vue.js):
+- Componentes reutilizáveis e bem estruturados
+- Estado gerenciado adequadamente (Vuex/Pinia)
+- Não há dados sensíveis no storage
+- Validação de formulários
+- Feedback e loading states
+- Tratamento de erros da API
+- Performance (lazy loading, code splitting)
+- Testes para componentes críticos
+
+"""
 num_max_findings = 3
 final_update_message = true
 # review labels
@@ -106,7 +158,46 @@ publish_labels=false
 add_original_user_description=true
 generate_ai_title=false
 use_bullet_points=true
-# extra_instructions = "" # Commented to allow user's .pr_agent.toml to take precedence
+extra_instructions = """
+CONTEXTO: Sistema REDS - Rede Estadual de Dados de Saúde.
+
+INCLUIR NA DESCRIÇÃO:
+- Considerações de segurança e privacidade
+- Impacto na performance do sistema
+
+DOCUMENTAR PARA AIRFLOW:
+- Impacto nos pipelines downstream
+- Mudanças no schedule ou dependências
+- Novos dados processados ou transformações
+- Impacto na performance do ETL
+- Compatibilidade com dados históricos
+
+DOCUMENTAR PARA API (Spring boot):
+- Novos endpoints ou mudanças existentes
+- Mudanças no contrato de API
+- Impacto na integração com frontend
+- Considerações de segurança
+- Performance esperada
+- Breaking changes para clientes
+
+DOCUMENTAR PARA DATABASE:
+- Tabelas/colunas afetadas
+- Estratégia de rollback
+- Impacto na performance
+- Dados que serão migrados
+- Dependências com outras migrations
+- Tempo estimado de execução
+
+DOCUMENTAR PARA FRONTEND:
+- Componentes novos ou modificados
+- Mudanças na experiência do usuário
+- Impacto na performance
+- Compatibilidade com navegadores
+- Acessibilidade implementada
+- Integração com APIs
+- Assets novos ou modificados
+
+"""
 enable_pr_type=false
 final_update_message = true
 enable_help_text=false
