@@ -83,7 +83,7 @@ class PRDescription:
             extra_instr = description_extra_instructions or ""
             snippet = str(extra_instr)[:200]
             if len(str(extra_instr)) > 200:
-            snippet += "..."
+                snippet += "..."
         get_logger().debug(f"PRDescription extra_instructions preview: {snippet}")
         except Exception:
             get_logger().debug("PRDescription extra_instructions preview unavailable")
