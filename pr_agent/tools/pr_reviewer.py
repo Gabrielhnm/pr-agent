@@ -101,6 +101,15 @@ class PRReviewer:
             "date": datetime.datetime.now().strftime('%Y-%m-%d'),
         }
 
+        try:
+            extra_instr = self.vars.get("extra_instructions", "")
+            snippet = str(extra_instr)[:200]
+            if len(str(extra_instr)) > 200:
+                snippet += "..."
+            get_logger().debug("PRReviewer extra_instructions preview: %s", snippet)
+        except Exception:
+            get_logger().debug("PRReviewer extra_instructions preview unavailable")
+
         self.token_handler = TokenHandler(
             self.git_provider.pr,
             self.vars,

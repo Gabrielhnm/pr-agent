@@ -77,6 +77,15 @@ class PRDescription:
             "enable_pr_diagram": enable_pr_diagram,
         }
 
+        try:
+            extra_instr = self.vars.get("extra_instructions", "")
+            snippet = str(extra_instr)[:200]
+            if len(str(extra_instr)) > 200:
+                snippet += "..."
+            get_logger().debug("PRDescription extra_instructions preview: %s", snippet)
+        except Exception:
+            get_logger().debug("PRDescription extra_instructions preview unavailable")
+
         self.user_description = self.git_provider.get_user_description()
 
         # Initialize the token handler
