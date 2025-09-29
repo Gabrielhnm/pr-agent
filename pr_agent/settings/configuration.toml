@@ -28,17 +28,17 @@ skip_keys = []
 custom_reasoning_model = false # when true, disables system messages and temperature controls for models that don't support chat-style inputs
 response_language="pt-BR" # Language locales code for PR responses in ISO 3166 and ISO 639 format (e.g., "en-US", "it-IT", "zh-CN", ...)
 # token limits
-max_description_tokens = 500
-max_commits_tokens = 500
-max_model_tokens = 32000 # Limits the maximum number of tokens that can be used by any model, regardless of the model's default capabilities.
+max_description_tokens = 1000
+max_commits_tokens = 1000
+max_model_tokens = 128000 # Limits the maximum number of tokens that can be used by any model, regardless of the model's default capabilities.
 custom_model_max_tokens=-1 # for models not in the default list
 model_token_count_estimate_factor=0.3 # factor to increase the token count estimate, in order to reduce likelihood of model failure due to too many tokens - applicable only when requesting an accurate estimate.
 # patch extension logic
 patch_extension_skip_types =[".md",".txt"]
 allow_dynamic_context=true
-max_extra_lines_before_dynamic_context = 10 # will try to include up to 10 extra lines before the hunk in the patch, until we reach an enclosing function or class
-patch_extra_lines_before = 5 # Number of extra lines (+3 default ones) to include before each hunk in the patch
-patch_extra_lines_after = 1 # Number of extra lines (+3 default ones) to include after each hunk in the patch
+max_extra_lines_before_dynamic_context = 20 # will try to include up to 10 extra lines before the hunk in the patch, until we reach an enclosing function or class
+patch_extra_lines_before = 10 # Number of extra lines (+3 default ones) to include before each hunk in the patch
+patch_extra_lines_after = 5 # Number of extra lines (+3 default ones) to include after each hunk in the patch
 secret_provider="" # "" (disabled), "google_cloud_storage", or "aws_secrets_manager" for secure secret management
 cli_mode=false
 ai_disclaimer_title=""  # Pro feature, title for a collapsible disclaimer to AI outputs
@@ -48,7 +48,7 @@ large_patch_policy = "clip" # "clip", "skip"
 duplicate_prompt_examples = false
 # seed
 seed=-1 # set positive value to fix the seed (and ensure temperature=0)
-temperature=0.2
+temperature=0.1
 # bring repo metadata 💎
 add_repo_metadata=true # if true, will try to add metadata from files like 'AGENTS.MD', 'CLAUDE.MD', 'QODO.MD'
 add_repo_metadata_file_list =["AGENTS.MD", "CLAUDE.MD", "README.MD", "changelog.md"]
@@ -62,7 +62,7 @@ ignore_repositories = [] # a list of regular expressions of repository full name
 ignore_language_framework = [] # a list of code-generation languages or frameworks (e.g. 'protobuf', 'go_gen') whose auto-generated source files will be excluded from analysis
 #
 is_auto_command = false # will be auto-set to true if the command is triggered by an automation
-enable_ai_metadata = false # will enable adding ai metadata
+enable_ai_metadata = true # will enable adding ai metadata
 reasoning_effort = "medium" # "low", "medium", "high"
 # auto approval 💎
 enable_auto_approval=false # Set to true to enable auto-approval of PRs under certain conditions
@@ -154,7 +154,7 @@ enable_intro_text=true
 enable_help_text=false # Determines whether to include help text in the PR review. Enabled by default.
 
 [pr_description] # /describe #
-publish_labels=false
+publish_labels=true
 add_original_user_description=true
 generate_ai_title=false
 use_bullet_points=true
@@ -198,7 +198,7 @@ DOCUMENTAR PARA FRONTEND:
 - Assets novos ou modificados
 
 """
-enable_pr_type=false
+enable_pr_type=true
 final_update_message = true
 enable_help_text=false
 enable_help_comment=false
@@ -210,7 +210,7 @@ publish_description_as_comment_persistent=true
 enable_semantic_files_types=true
 collapsible_file_list='adaptive' # true, false, 'adaptive'
 collapsible_file_list_threshold=6
-inline_file_summary=false # false, true, 'table'
+inline_file_summary=table # false, true, 'table'
 # markers
 use_description_markers=false
 include_generated_by_header=true
@@ -460,10 +460,10 @@ uri = "./lancedb"
 # api_key = "..."
 
 [best_practices]
-content = "Mantenha um padrão de código, caso fuja do padrão dos códigos já existentes é importante alertar, manter chaves primarias no insert não é tolerado e deve ser alertado com alta importância"
+content = "Mantenha um padrão de código, caso fuja do padrão dos códigos já existentes é de extrema importancia que seja alertado, manter informações sensíveis não é tolerado e deve ser alertado com alta importância"
 organization_name = ""
 max_lines_allowed = 800
-enable_global_best_practices = false
+enable_global_best_practices = true
 
 [auto_best_practices]
 enable_auto_best_practices = true # public - general flag to disable all auto best practices usage
