@@ -14,7 +14,7 @@ fallback_models=["gpt-5"]
 git_provider="gitlab"
 publish_output=true
 publish_output_progress=true
-verbosity_level=2 # 0,1,2 (aumentar para debug)
+verbosity_level=0 # 0,1,2 (production - minimal logging)
 use_extra_bad_extensions=false
 # Log
 log_level="DEBUG"

@@ -647,7 +647,11 @@ class PRDescription:
                     continue
                 changes_summary = changes_summary.strip()
                 changes_title = file['changes_title'].strip()
-                label = file.get('label').strip().lower()
+                label = file.get('label')
+                # Handle label as list or string
+                if isinstance(label, list):
+                    label = label[0] if label else ""
+                label = str(label).strip().lower()
                 if label not in file_label_dict:
                     file_label_dict[label] = []
                 file_label_dict[label].append((filename, changes_title, changes_summary))
