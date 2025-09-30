@@ -265,6 +265,7 @@ class AzureDevopsProvider(GitProvider):
             for file in diffs:
                 if not is_valid_file(file):
                     invalid_files_names.append(file)
+                    get_logger().warning(f"File rejected by is_valid_file: {file}")
                     continue
 
                 version = GitVersionDescriptor(
