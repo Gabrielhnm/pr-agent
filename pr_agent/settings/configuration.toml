@@ -62,7 +62,7 @@ ignore_repositories = [] # a list of regular expressions of repository full name
 ignore_language_framework = [] # a list of code-generation languages or frameworks (e.g. 'protobuf', 'go_gen') whose auto-generated source files will be excluded from analysis
 #
 is_auto_command = false # will be auto-set to true if the command is triggered by an automation
-enable_ai_metadata = true # will enable adding ai metadata
+enable_ai_metadata = false # will enable adding ai metadata (disabled for Azure DevOps due to 4000 char limit)
 reasoning_effort = "medium" # "low", "medium", "high"
 # auto approval 💎
 enable_auto_approval=false # Set to true to enable auto-approval of PRs under certain conditions
@@ -84,7 +84,7 @@ require_can_be_split_review=false
 require_security_review=true
 require_estimate_contribution_time_cost=false
 require_todo_scan=false
-require_ticket_analysis_review=true
+require_ticket_analysis_review=false
 # general options
 publish_output_no_suggestions=true # Set to "false" if you only need the reviewer's remarks (not labels, not "security audit", etc.) and want to avoid noisy "No major issues detected" comments.
 persistent_comment=true
